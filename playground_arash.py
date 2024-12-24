@@ -5,8 +5,10 @@ import time
 from multiprocessing import Pool, Lock, Manager
 import io
 import random
-
-
+from midi_fetcher import find_midi_files
+import tqdm
+import os
+OUT_PATH = 'processed.txt'
 
 pos_resolution = 16  # per beat (quarter note)
 bar_max = 256
@@ -256,7 +258,7 @@ def F(file_name):
         return False
     try:
         lock_write.acquire()
-        writer('l/out.txt', output_str_list)
+        writer(OUT_PATH, output_str_list)
     except BaseException as e:
         print('ERROR(WRITE): ' + file_name + ' ' + str(e) + '\n', end='')
         return False
@@ -266,5 +268,12 @@ def F(file_name):
     return True
 
 if __name__ == '__main__':
-    f = "/Users/arashsadeghiamjadi/Desktop/WORKDIR/muzic/lmd_full/0/"+"0cc576ca78d99cd6a7153dffb453165b.mid"
-    F(f)
+    # f = "/Users/arashsadeghiamjadi/Desktop/WORKDIR/muzic/lmd_full/0/"+"0cc576ca78d99cd6a7153dffb453165b.mid"
+    dataset_path = "/Users/arashsadeghiamjadi/Desktop/WORKDIR/Drum_transformer/dataset/groove"
+    files = find_midi_files(dataset_path)
+    SIZE_LIM = 10 #GB
+    for file in tqdm.tqdm(files, desc="Processing files"):
+            F(file)
+            if os.path.getsize(OUT_PATH) >= SIZE_LIM  * 1024 ** 3:  # 10 GB
+                print(f"File {file} exceeds {SIZE_LIM} GB, stopping.")
+                break
