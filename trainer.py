@@ -11,6 +11,7 @@ class StandaloneMusicBERTModel(torch.nn.Module):
         super().__init__()
         self.model = model
         self.dictionary = dictionary
+        set_trace()
 
     def token2id(self,batch):
         """Convert grouped input tokens to tensor IDs and pass through the model.
@@ -37,7 +38,6 @@ class StandaloneMusicBERTModel(torch.nn.Module):
 
     def forward(self, grouped_input_tokens):
         batched_id = self.token2id(grouped_input_tokens)
-        # set_trace()
         input_tensor = torch.tensor(batched_id)# .unsqueeze(0)  # Add batch dimension
         # return self.model(**{"src_tokens": input_tensor})
         # Flatten the sequence and group dimensions
