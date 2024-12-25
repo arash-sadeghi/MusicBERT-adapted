@@ -1,0 +1,5 @@
+outs:
+- md5: 990d1f459dc36a59d847be4dc2c352cb
+  size: 24096
+  hash: md5
+  path: dict.json

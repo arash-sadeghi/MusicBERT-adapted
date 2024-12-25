@@ -1,9 +1,12 @@
 .env37/**
 .python-version
 __pycache__/
-checkpoint_last_musicbert_base.pt
 chord_mapping.pkl
-example_training_data.txt
 masked_lm_task_source_dictionary.txt
 standalone_musicbert_model.pth
 wandb/
+/dict.json
+/processed.txt
+/torch_groove_train.pkl
+/torch_groove_val.pkl
+/checkpoint_last_musicbert_base.pt

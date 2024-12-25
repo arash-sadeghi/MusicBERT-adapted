@@ -1,0 +1,5 @@
+outs:
+- md5: 134a5bb18e8299218d9f8d6e7793244f
+  size: 38348
+  hash: md5
+  path: chord_mapping.pkl

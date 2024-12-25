@@ -1,0 +1,5 @@
+outs:
+- md5: 1b592feb7851e82aab8fe2d3530c108d
+  size: 1231977039
+  hash: md5
+  path: checkpoint_last_musicbert_base.pt
