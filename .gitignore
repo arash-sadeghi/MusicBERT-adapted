@@ -6,3 +6,4 @@ chord_mapping.pkl
 example_training_data.txt
 masked_lm_task_source_dictionary.txt
 standalone_musicbert_model.pth
+wandb/
