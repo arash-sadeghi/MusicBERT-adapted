@@ -84,7 +84,6 @@ def train_autoencoder(model, batch_size=16, lr=1e-4, device="cuda"):
                 optimizer.step()
                 
                 batch_pbar.set_postfix(loss=loss.item())
-                break #! debug
 
         wandb.log({"trainLoss": float(mean(losses))},step=epoch)
         batch_pbar.set_postfix(loss=mean(losses))
