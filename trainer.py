@@ -2,13 +2,13 @@ import torch
 from torch import nn, optim
 from tqdm import tqdm
 from data_loader import DataLoaderMusicBERT, CustomDataset
-from pdb import set_trace
+# from pdb import set_trace
 from time import time,ctime
 from copy import deepcopy
 from statistics import mean
 import wandb
 import os 
-
+from env import wandbAPI
 EPOCHS = 1000
 SAVE_INTERVAL = 100
 CODE_RUN_TIME = ctime(time()).replace(':','_').replace(' ','_')
@@ -26,7 +26,8 @@ class StandaloneMusicBERTModel(torch.nn.Module):
         return self.model(**{"src_tokens": input_tensor})
 
 def train_autoencoder(model, batch_size=16, lr=1e-4, device="cuda"):
-    wandb.init(project="MusicBERT")
+    wandb.login(key=wandbAPI)
+    wandb.init(project="MusicBERT" )
     wandb.watch(model)
 
     model.to(device)
@@ -44,7 +45,7 @@ def train_autoencoder(model, batch_size=16, lr=1e-4, device="cuda"):
         model.train()
         epoch_desc = f"[++] Epoch {epoch + 1}/{EPOCHS} (0.00%)"
         losses = []
-        set_trace()
+        # set_trace()
         with tqdm(total=total_batches, desc=epoch_desc, unit="batch") as batch_pbar:
             for batch_idx, batch in enumerate(dl_train):
                 epoch_percentage = ((epoch * total_batches + batch_idx + 1) / (EPOCHS * total_batches)) * 100
