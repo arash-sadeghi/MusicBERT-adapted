@@ -3,22 +3,16 @@ FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu18.04
 
 # Install Python 3.7
 RUN apt-get update && apt-get install -y \
-    python3.7 python3.7-distutils python3-pip python3.7-dev \
+    python3.7 python3.7-distutils python3-pip \
     git curl gcc g++ make \
-    libffi-dev libssl-dev libsasl2-dev libldap2-dev libpython3.7-dev \
-    libopenblas-dev liblapack-dev libsndfile1-dev libjpeg-dev zlib1g-dev \
+    libffi-dev libssl-dev libsasl2-dev libldap2-dev python3-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Python 3.7 as default
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.7 1
 
-# Upgrade pip, setuptools, wheel, and install Cython
-RUN python -m pip install --no-cache-dir --upgrade pip setuptools wheel
-RUN python -m pip install --no-cache-dir Cython==0.29.36
-
-# Install numpy separately to satisfy build dependencies
-RUN python -m pip install --no-cache-dir numpy==1.21.6
+# RUN python -m pip install --upgrade pip setuptools wheel
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -40,6 +34,9 @@ COPY torch_groove_val.pkl /app
 COPY torch_groove_train.pkl /app
 
 # Install Python dependencies
+RUN python -m pip install --no-cache-dir --upgrade pip setuptools wheel
+RUN python -m pip install --no-cache-dir Cython==0.29.36
+RUN python -m pip install --no-cache-dir numpy==1.21.6
 RUN python -m pip install --no-cache-dir -r requirements.txt
 
 # Expose any required ports

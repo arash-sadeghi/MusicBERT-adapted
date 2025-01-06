@@ -10,3 +10,4 @@ wandb/
 /torch_groove_train.pkl
 /torch_groove_val.pkl
 /checkpoint_last_musicbert_base.pt
+*.tar
