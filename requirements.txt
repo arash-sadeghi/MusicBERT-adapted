@@ -96,7 +96,7 @@ tensorboard==2.4.0
 tensorboard-plugin-wit==1.8.1
 textrank4zh==0.3
 tokenizers==0.9.3
-torch==1.7.1
+# torch==1.7.1
 tqdm==4.67.1
 transformers==3.5.1
 typing_extensions==4.7.1

@@ -40,6 +40,7 @@ COPY torch_groove_val.pkl /app
 COPY torch_groove_train.pkl /app
 
 # Install Python dependencies
+RUN pip3 install torch
 RUN python -m pip install --no-cache-dir -r requirements.txt
 
 # Expose any required ports
