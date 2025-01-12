@@ -11,3 +11,4 @@ wandb/
 /torch_groove_val.pkl
 /checkpoint_last_musicbert_base.pt
 .env/
+*.tar

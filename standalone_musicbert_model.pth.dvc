@@ -1,0 +1,5 @@
+outs:
+- md5: ece0ef9ae6feed31c1532d302b51f853
+  size: 413270373
+  hash: md5
+  path: standalone_musicbert_model.pth
