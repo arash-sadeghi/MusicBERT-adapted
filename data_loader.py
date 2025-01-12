@@ -3,8 +3,9 @@ from torch.utils.data import Dataset, DataLoader
 import torch
 import pickle
 from sklearn.model_selection import train_test_split
-
-
+from env import BATCH_SIZE
+from pdb import set_trace
+import numpy as np  
 def group2eight(input_list , group_size):
     return [input_list[i:i + group_size] for i in range(0, len(input_list), group_size)]
 
@@ -50,7 +51,7 @@ class LargeTextTokenizer:
 
                 song_id_grouped = group2eight(song_id , self.group_size)
                 tokens.append(song_id_grouped)
-        return torch.tensor(tokens)
+        return np.array(tokens) #torch.tensor(tokens)
     
     def get_tokens(self):
         return self.tokens
@@ -104,11 +105,11 @@ class DataLoaderMusicBERT:
 
     def create_train_data_loader(self , file_path = "processed.txt" ,train_input_path = "torch_groove_train.pkl" ,val_input_path = "torch_groove_val.pkl"):
         dataset = LargeTextTokenizer(file_path, self.batch_size)
-
+        # set_trace()
         df_train, df_val = train_test_split(dataset.get_tokens(), test_size=0.2)
 
-        train = CustomDataset(df_train)
-        val = CustomDataset(df_val)
+        train = CustomDataset(torch.tensor(df_train))
+        val = CustomDataset(torch.tensor(df_val))
 
         self.train_loader = DataLoader(train, batch_size=self.batch_size, shuffle=True , collate_fn=custom_collate)
         self.val_loader = DataLoader(val, batch_size=self.batch_size, shuffle=True , collate_fn=custom_collate)
@@ -137,7 +138,7 @@ class DataLoaderMusicBERT:
 #     # Example: output = model(batch[0])
 #     break  # Remove this break to process the full dataset
 if __name__ == '__main__':
-    dl = DataLoaderMusicBERT(batch_size = 16)
+    dl = DataLoaderMusicBERT(batch_size = BATCH_SIZE)
     # dl.load_dataloader()
     dl.create_train_data_loader()
     for batch in dl.get_train_data_loader():

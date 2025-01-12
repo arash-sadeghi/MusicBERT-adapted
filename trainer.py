@@ -8,7 +8,7 @@ from copy import deepcopy
 from statistics import mean
 import wandb
 import os 
-from env import wandbAPI
+from env import wandbAPI, BATCH_SIZE
 EPOCHS = 1000
 SAVE_INTERVAL = 100
 CODE_RUN_TIME = ctime(time()).replace(':','_').replace(' ','_')
@@ -25,13 +25,13 @@ class StandaloneMusicBERTModel(torch.nn.Module):
         input_tensor = input_tensor.view(batch_size, -1)  # Shape: [batch_size, sequence_length * group_length]
         return self.model(**{"src_tokens": input_tensor})
 
-def train_autoencoder(model, batch_size=16, lr=1e-4, device="cuda"):
+def train_autoencoder(model, batch_size= BATCH_SIZE, lr=1e-4, device="cuda"):
     wandb.login(key=wandbAPI)
     wandb.init(project="MusicBERT" )
     wandb.watch(model)
 
     model.to(device)
-    dl = DataLoaderMusicBERT(batch_size=1)
+    dl = DataLoaderMusicBERT(batch_size)
     dl.load_dataloader()
     dl_train = dl.train_loader
     dl_val = dl.val_loader
@@ -49,7 +49,7 @@ def train_autoencoder(model, batch_size=16, lr=1e-4, device="cuda"):
         with tqdm(total=total_batches, desc=epoch_desc, unit="batch") as batch_pbar:
             for batch_idx, batch in enumerate(dl_train):
                 epoch_percentage = ((epoch * total_batches + batch_idx + 1) / (EPOCHS * total_batches)) * 100
-                batch_pbar.set_description(f"[+] Epoch {epoch + 1}/{EPOCHS} ({epoch_percentage:.2f}%)")
+                batch_pbar.set_description(f"[+] Epoch {epoch + 1}/{EPOCHS} ({epoch_percentage:.2f}%) batch size {batch[0][0].shape}")
                 batch_pbar.update(1)
                 batch_pbar.refresh()
                 # Process the batch
@@ -122,4 +122,4 @@ if __name__ == '__main__':
     model = torch.load(model_path)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"[+] device {device}")
-    train_autoencoder(model, batch_size=16, lr=1e-4, device=device)
+    train_autoencoder(model, device=device)
