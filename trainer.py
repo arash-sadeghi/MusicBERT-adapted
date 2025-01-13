@@ -33,6 +33,7 @@ def train_autoencoder(model, batch_size= BATCH_SIZE, lr=1e-4, device="cuda"):
     model.to(device)
     dl = DataLoaderMusicBERT(batch_size)
     dl.load_dataloader()
+    # dl.create_train_data_loader()
     dl_train = dl.train_loader
     dl_val = dl.val_loader
 
@@ -49,7 +50,7 @@ def train_autoencoder(model, batch_size= BATCH_SIZE, lr=1e-4, device="cuda"):
         with tqdm(total=total_batches, desc=epoch_desc, unit="batch") as batch_pbar:
             for batch_idx, batch in enumerate(dl_train):
                 epoch_percentage = ((epoch * total_batches + batch_idx + 1) / (EPOCHS * total_batches)) * 100
-                batch_pbar.set_description(f"[+] Epoch {epoch + 1}/{EPOCHS} ({epoch_percentage:.2f}%) batch size {batch[0][0].shape}")
+                batch_pbar.set_description(f"[+] Epoch {epoch + 1}/{EPOCHS} ({epoch_percentage:.2f}%)")
                 batch_pbar.update(1)
                 batch_pbar.refresh()
                 # Process the batch
@@ -118,6 +119,7 @@ def train_autoencoder(model, batch_size= BATCH_SIZE, lr=1e-4, device="cuda"):
     print("Training Complete!")
 
 if __name__ == '__main__':
+    torch.cuda.empty_cache()
     model_path = "standalone_musicbert_model.pth"
     model = torch.load(model_path)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

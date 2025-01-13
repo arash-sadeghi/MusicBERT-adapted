@@ -29,19 +29,22 @@ ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 # Create a working directory
 WORKDIR /app
 
+# Install Python dependencies
+RUN pip3 install torch
+
 # Copy application files
+COPY requirements.txt /app
+
+RUN python -m pip install --no-cache-dir -r requirements.txt
+
 COPY musicbert /app/musicbert
 COPY *.py /app
 COPY checkpoint_last_musicbert_base.pt  /app
 COPY dict.json  /app
-COPY requirements.txt /app
 COPY standalone_musicbert_model.pth /app
 COPY torch_groove_val.pkl /app
 COPY torch_groove_train.pkl /app
-
-# Install Python dependencies
-RUN pip3 install torch
-RUN python -m pip install --no-cache-dir -r requirements.txt
+COPY processed.txt /app
 
 # Expose any required ports
 EXPOSE 5000
