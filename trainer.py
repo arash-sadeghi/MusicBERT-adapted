@@ -9,8 +9,8 @@ from statistics import mean
 import wandb
 import os 
 from env import wandbAPI, BATCH_SIZE
-EPOCHS = 1000
-SAVE_INTERVAL = 100
+EPOCHS = 10000
+SAVE_INTERVAL = 10
 CODE_RUN_TIME = ctime(time()).replace(':','_').replace(' ','_')
 STATE_SAVE_PATH = os.path.join('data','state',CODE_RUN_TIME)
 
@@ -32,8 +32,8 @@ def train_autoencoder(model, batch_size= BATCH_SIZE, lr=1e-4, device="cuda"):
 
     model.to(device)
     dl = DataLoaderMusicBERT(batch_size)
-    dl.load_dataloader()
-    # dl.create_train_data_loader()
+    # dl.load_dataloader()
+    dl.create_train_data_loader()
     dl_train = dl.train_loader
     dl_val = dl.val_loader
 

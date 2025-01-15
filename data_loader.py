@@ -20,7 +20,9 @@ class LargeTextTokenizer:
             file_path (str): Path to the large text file.
             batch_size (int): Number of tokens per batch.
         """
-        self.max_pad_group  = 1002
+        # self.max_pad_group  = 1002
+        self.max_pad_group  = 500
+        self.max_pad_group_octa = self.max_pad_group * 8
         self.group_size = 8
         with open(dict_path, 'r') as file:
             self.dict = json.load(file)
@@ -46,8 +48,10 @@ class LargeTextTokenizer:
                     song_id.append(self.dict[note])
 
                 #! add pad
-                song_id +=  (8* self.max_pad_group - len(song_id)) * [1]
-
+                if len(song_id) <  self.max_pad_group_octa :
+                    song_id +=  (self.max_pad_group_octa - len(song_id)) * [1]
+                elif len(song_id) >  self.max_pad_group_octa:
+                    song_id = song_id[:self.max_pad_group_octa]
 
                 song_id_grouped = group2eight(song_id , self.group_size)
                 tokens.append(song_id_grouped)
@@ -104,6 +108,8 @@ class DataLoaderMusicBERT:
         return self.train_loader
 
     def create_train_data_loader(self , file_path = "processed.txt" ,train_input_path = "torch_groove_train.pkl" ,val_input_path = "torch_groove_val.pkl"):
+        print("[+] creating tensor with batch of", self.batch_size)
+
         dataset = LargeTextTokenizer(file_path, self.batch_size)
         # set_trace()
         df_train, df_val = train_test_split(dataset.get_tokens(), test_size=0.2)
@@ -111,14 +117,16 @@ class DataLoaderMusicBERT:
         train = CustomDataset(torch.tensor(df_train))
         val = CustomDataset(torch.tensor(df_val))
 
-        self.train_loader = DataLoader(train, batch_size=self.batch_size, shuffle=True , collate_fn=custom_collate)
-        self.val_loader = DataLoader(val, batch_size=self.batch_size, shuffle=True , collate_fn=custom_collate)
+        self.train_loader = DataLoader(train, batch_size=self.batch_size, shuffle=True , pin_memory=True , collate_fn=custom_collate)
+        self.val_loader = DataLoader(val, batch_size=self.batch_size, shuffle=True ,pin_memory=True , collate_fn=custom_collate)
 
         with open(train_input_path, "wb") as f:
             pickle.dump(self.train_loader.dataset, f)
 
         with open(val_input_path, "wb") as f:
             pickle.dump(self.val_loader.dataset, f)
+        
+        print("[+] creating tensor Done")
 
     def load_dataloader(self ,train_input_path = "torch_groove_train.pkl" ,val_input_path = "torch_groove_val.pkl"):
         print("[+] loading tensor")
@@ -130,6 +138,7 @@ class DataLoaderMusicBERT:
         with open(val_input_path, "rb") as f:
             dataset = pickle.load(f)        
         self.val_loader = torch.utils.data.DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
+        print("[+] loading tensor Done")
 
 # # Iterate through the dataloader
 # for batch_idx, batch in enumerate(train_loader):
